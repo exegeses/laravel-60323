@@ -18,3 +18,9 @@ Route::get('/manzana', function ()
                     ]
                 );
 });
+
+Route::get('/inicio', function ()
+{
+    return view('inicio');
+});
+
