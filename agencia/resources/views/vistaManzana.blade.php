@@ -10,8 +10,14 @@
 <body>
     <h1>Soy una vista</h1>
     <p>
-        Pediste manzanas
+        {{ $persona }} pediste manzanas {{ date('d/m/Y') }}
     </p>
+
+    <ul>
+    @for( $n=1; $n<=$numero; $n++ )
+        <li>{{ $n }}</li>
+    @endfor
+    </ul>
 
 </body>
 </html>

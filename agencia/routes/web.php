@@ -9,5 +9,12 @@ Route::get('/', function () {
 //Route::get('peticion', acción);
 Route::get('/manzana', function ()
 {
-    return view('vistaManzana');
+    $nombre = 'marcos';
+    $numero = 7;
+    return view('vistaManzana',
+                    [
+                        'persona'=>$nombre,
+                        'numero'=>$numero
+                    ]
+                );
 });
