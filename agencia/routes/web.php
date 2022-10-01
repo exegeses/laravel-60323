@@ -23,4 +23,21 @@ Route::get('/inicio', function ()
 {
     return view('inicio');
 });
+Route::view('/form', 'form' );
+Route::post('/procesa', function ()
+{
+    //$nombre = $_POST['nombre'];
+    $nombre = request()->nombre;
+    return $nombre;
+});
+// test Ayrton para la conexión
+Route::view('/testConnection', 'testConnection');
 
+/*###  CRUD DE REGIONES ###*/
+Route::get('/regiones', function ()
+{
+    //obtenemos listado de regiones
+    $regiones = DB::select('SELECT idRegion, regNombre
+                                FROM regiones');
+    return view('regiones', [ 'regiones'=>$regiones ]);
+});

@@ -3,7 +3,7 @@
 
     <main class="container py-4">
 
-        contenido
+        @yield('contenido')
 
     </main>
 
