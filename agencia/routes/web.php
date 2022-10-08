@@ -41,3 +41,79 @@ Route::get('/regiones', function ()
                                 FROM regiones');
     return view('regiones', [ 'regiones'=>$regiones ]);
 });
+Route::get('/region/create', function ()
+{
+    return view('regionCreate');
+});
+Route::post('/region/store', function ()
+{
+    $regNombre = request()->regNombre;
+    //insertamos dato en tabla regiones
+    try{
+        DB::insert('INSERT INTO regiones
+                            ( regNombre )
+                        VALUES
+                            ( :regNombre )',
+                            [ $regNombre ]
+                   );
+        return redirect('/regiones')
+                ->with([
+                        'mensaje'=>'Región: '.$regNombre.' agregada correctamente',
+                        'css'=>'success'
+                       ]);
+    }
+    catch ( \Throwable $th )
+    {
+        return redirect('/regiones')
+            ->with([
+                'mensaje'=>'No se puedo agregar la región: '.$regNombre,
+                'css'=>'danger'
+            ]);
+    }
+});
+Route::get('/region/edit/{id}', function ( $id )
+{
+    //obtener datos de la región
+    /* rawSQL
+    $region = DB::select('SELECT idRegion, regNombre
+                            FROM regiones
+                            WHERE idRegion = :id',
+                                    [ $id ]); */
+    /* fluent Query Builder */
+    $region = DB::table('regiones')
+                    ->where('idRegion', $id)
+                    ->first();
+    //retornar vista de form para modificar
+    return view('regionEdit', [ 'region'=>$region ]);
+});
+Route::patch('/region/update', function ()
+{
+    //capturamos datos enviados por el form
+    $regNombre = request()->regNombre;
+    $idRegion = request()->idRegion;
+    try {
+        /* rawSQL
+        DB::update('UPDATE regiones
+                        SET regNombre = :regNombre
+                        WHERE idRegion = :idRegion',
+                            [ $regNombre, $idRegion ]);*/
+        DB::table('regiones')
+                ->where('idRegion', $idRegion)
+                ->update( [ 'regNombre'=>$regNombre ] );
+        return redirect('/regiones')
+                ->with(
+                    [
+                        'mensaje'=>'Región: '.$regNombre.' modificada correctamente.',
+                        'css'=>'success'
+                    ]
+                );
+    }
+    catch ( \Throwable $th )
+    {
+        return redirect('/regiones')
+            ->with([
+                'mensaje'=>'No se puedo agregar la región: '.$regNombre,
+                'css'=>'danger'
+            ]);
+    }
+});
