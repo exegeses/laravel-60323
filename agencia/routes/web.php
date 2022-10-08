@@ -117,3 +117,50 @@ Route::patch('/region/update', function ()
             ]);
     }
 });
+Route::get('/region/delete/{id}', function ($id)
+{
+    //obtenemnos datos de la región
+    $region = DB::table('regiones')
+        ->where('idRegion', $id)
+        ->first();
+    //saber si hay destinos x región
+    $cantidad = DB::table('destinos')
+                    ->where('idRegion', $id)
+                    ->count();
+    if( $cantidad ){
+        return redirect('/regiones')
+                ->with([
+                    'mensaje'=>'Región: '.$region->regNombre.' no se puede eliminar ya que tiene destinos relacionados.',
+                    'css'=>'warning'
+                ]);
+    }
+    return view('regionDelete', [ 'region'=>$region ]);
+});
+Route::delete('/region/destroy', function ()
+{
+    $idRegion = request()->idRegion;
+    $regNombre = request()->regNombre;
+    try {
+        /* rawSQL
+        DB::delete('DELETE FROM regiones
+                        WHERE idRegion = :idRegion',
+                            [ $idRegion ]); */
+        DB::table('regiones')
+                ->where('idRegion', $idRegion)
+                ->delete();
+        return redirect('/regiones')
+            ->with([
+                'mensaje'=>'Región: '.$regNombre.' eliminada correctamente',
+                'css'=>'success'
+            ]);
+
+    }
+    catch ( \Throwable $th )
+    {
+        return redirect('/regiones')
+            ->with([
+                'mensaje'=>'No se puedo eliminar la región: '.$regNombre,
+                'css'=>'danger'
+            ]);
+    }
+});
