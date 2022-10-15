@@ -220,7 +220,59 @@ Route::post('/destino/store', function ()
     {
         return redirect('/destinos')
             ->with([
-                'mensaje'=>'No se puedo agrega el destino: '.$destNombre,
+                'mensaje'=>'No se puedo agregar el destino: '.$destNombre,
+                'css'=>'danger'
+            ]);
+    }
+});
+Route::get('/destino/edit/{id}', function ($id)
+{
+    //obtenemos datos de destino por $id
+    $destino = DB::table('destinos')
+                    ->where('idDestino', $id)
+                    ->first();
+    //obtenemos listado de regiones
+    $regiones = DB::table('regiones')
+        ->select('idRegion', 'regNombre')
+        ->get();
+    return view('destinoEdit',
+            [
+                'destino'=>$destino,
+                'regiones'=>$regiones
+            ]
+        );
+});
+Route::patch('/destino/update', function ()
+{
+    $destNombre = request()->destNombre;
+    $idRegion = request()->idRegion;
+    $destPrecio = request()->destPrecio;
+    $destAsientos = request()->destAsientos;
+    $destDisponibles = request()->destDisponibles;
+    $idDestino = request()->idDestino;
+    try {
+        DB::table('destinos')
+            ->where('idDestino', $idDestino)
+            ->update(
+                [
+                    "destNombre" => $destNombre,
+                    "idRegion" => $idRegion,
+                    "destPrecio" => $destPrecio,
+                    "destAsientos" => $destAsientos,
+                    "destDisponibles" => $destDisponibles
+                ]
+            );
+        return redirect('/destinos')
+            ->with([
+                'mensaje'=>'Destino: '.$destNombre.' modificado correctamente',
+                'css'=>'success'
+            ]);
+    }
+    catch ( \Throwable $th )
+    {
+        return redirect('/destinos')
+            ->with([
+                'mensaje'=>'No se puedo modificar el destino: '.$destNombre,
                 'css'=>'danger'
             ]);
     }

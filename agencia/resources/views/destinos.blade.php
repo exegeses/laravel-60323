@@ -37,7 +37,7 @@
                 <span class="precio3">${{ $destino->destPrecio }}</span>
             </div>
             <div class="col text-end btn-group">
-                <a href="#" class="btn btn-outline-secondary me-1">
+                <a href="/destino/edit/{{ $destino->idDestino }}" class="btn btn-outline-secondary me-1">
                     <i class="bi bi-pencil-square"></i>
                     Modificar
                 </a>
