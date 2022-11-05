@@ -13,3 +13,4 @@ Route::get('/marcas', [ MarcaController::class, 'index' ]);
 Route::get('/marca/create', [ MarcaController::class, 'create' ]);
 Route::post('/marca/store', [ MarcaController::class, 'store' ]);
 Route::get('/marca/edit/{id}', [ MarcaController::class, 'edit' ]);
+Route::patch('/marca/update', [ MarcaController::class, 'update' ]);

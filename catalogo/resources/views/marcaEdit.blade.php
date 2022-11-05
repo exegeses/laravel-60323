@@ -10,7 +10,7 @@
             <div class="form-group">
                 <label for="mkNombre">Nombre de la marca</label>
                 <input type="text" name="mkNombre"
-                       value="{{ $Marca->mkNombre }}"
+                       value="{{ old('mkNombre', $Marca->mkNombre ) }}"
                        class="form-control" id="mkNombre">
             </div>
             <input type="hidden" name="idMarca"

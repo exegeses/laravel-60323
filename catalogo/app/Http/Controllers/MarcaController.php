@@ -118,9 +118,37 @@ class MarcaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        //validación
+        $this->validarForm($request);
+
+        $mkNombre = $request->mkNombre; //request()->
+        try {
+            //obtenemos datos de una marca por su id
+            $Marca = Marca::find( $request->idMarca );
+            //reasignamos atributos
+            $Marca->mkNombre = $mkNombre;
+            //guardamos cambios
+            $Marca->save();
+            //redirección con masaje ok
+            return redirect('/marcas')
+                ->with(
+                    [
+                        'mensaje'=>'Marca: '.$mkNombre.' modificada correctamente.',
+                        'css'=>'success'
+                    ]
+                );
+        }
+        catch ( \Throwable $th ){
+            return redirect( '/marcas' )
+                ->with(
+                    [
+                        'mensaje'=>'No se pudo modificar la marca: '.$mkNombre,
+                        'css'=>'danger'
+                    ]
+                );
+        }
     }
 
     /**
