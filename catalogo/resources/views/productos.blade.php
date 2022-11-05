@@ -4,7 +4,7 @@
     <h1>Panel de administración de productos</h1>
 
     @if( session('mensaje') )
-        <div class="alert alert-success">
+        <div class="alert alert-{{ session('css') }}">
             {{ session('mensaje') }}
         </div>
     @endif
@@ -23,18 +23,17 @@
         </div>
     </div>
 
-
+    @foreach( $productos as $producto )
     <div class="row mt-3">
         <figure class="col-3">
-            <img src="productos/noDisplible.png" class="img-thumbnail">
+            <img src="/imagenes/productos/{{ $producto->prdImagen }}" class="img-thumbnail">
         </figure>
         <div class="col-8">
-            <h2>Nombre</h2>
-            <span class="precio3">$precio</span>
+        <h2>{{ $producto->prdNombre }}</h2>
+            <span class="precio3">${{ $producto->prdPrecio }}</span>
             <p>
-                Marca: marca <br>
-                Categoría: categoría <br>
-                Descripción
+                Marca: {{ $producto->idMarca }} <br>
+                Categoría: {{ $producto->idCategoria }} <br>
             </p>
         </div>
         <div class="col-1 d-grid d-md-block">
@@ -48,6 +47,8 @@
             </a>
         </div>
     </div>
+    @endforeach
 
+    {{ $productos->links() }}
 
 @endsection
