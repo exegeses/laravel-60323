@@ -189,8 +189,30 @@ class MarcaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy( Request $request )
     {
-        //
+        $mkNombre = $request->mkNombre;
+        try {
+            /*$Marca = Marca::find($request->idMarca);
+            $Marca->delete();*/
+            Marca::destroy($request->idMarca);
+            //redirección con masaje ok
+            return redirect('/marcas')
+                ->with(
+                    [
+                        'mensaje'=>'Marca: '.$mkNombre.' eliminada correctamente.',
+                        'css'=>'success'
+                    ]
+                );
+        }
+        catch ( \Throwable $th ){
+            return redirect( '/marcas' )
+                ->with(
+                    [
+                        'mensaje'=>'No se pudo eliminar la marca: '.$mkNombre,
+                        'css'=>'danger'
+                    ]
+                );
+        }
     }
 }
