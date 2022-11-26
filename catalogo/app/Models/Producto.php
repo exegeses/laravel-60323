@@ -30,4 +30,15 @@ class Producto extends Model
         );
     }
 
+
+    public function scopeMenor($query, $monto)
+    {
+        return  $query->Where('prdPrecio', '<', $monto);
+    }
+
+    public function scopeAlfa($query)
+    {
+        return $query->orderBy('prdNombre');
+    }
+
 }

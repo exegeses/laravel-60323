@@ -1,15 +1,16 @@
 @extends('layouts.plantilla')
 @section('contenido')
 
-    <h1>Alta de un nuevo producto</h1>
+    <h1>Modificación de un producto</h1>
 
     <div class="alert p-4 col-8 mx-auto shadow">
-        <form action="/producto/store" method="post" enctype="multipart/form-data">
+        <form action="/producto/update" method="post" enctype="multipart/form-data">
+        @method('patch')
         @csrf
             <div class="form-group mb-4">
                 <label for="prdNombre">Nombre del Producto</label>
                 <input type="text" name="prdNombre"
-                       value="{{ old('prdNombre') }}"
+                       value="{{ old('prdNombre', $Producto->prdNombre) }}"
                        class="form-control" id="prdNombre">
             </div>
 
@@ -19,7 +20,7 @@
                     <div class="input-group-text">$</div>
                 </div>
                 <input type="number" name="prdPrecio"
-                       value="{{ old('prdPrecio') }}"
+                       value="{{ old('prdPrecio', $Producto->prdPrecio) }}"
                        class="form-control" id="prdPrecio" step="0.01">
             </div>
 
@@ -28,7 +29,7 @@
                 <select class="form-select" name="idMarca" id="idMarca">
                     <option value="">Seleccione una marca</option>
                 @foreach( $marcas as $marca )
-                    <option @selected( old('idMarca')==$marca->idMarca ) value="{{ $marca->idMarca }}">{{ $marca->mkNombre }}</option>
+                    <option @selected( old('idMarca', $Producto->idMarca)==$marca->idMarca ) value="{{ $marca->idMarca }}">{{ $marca->mkNombre }}</option>
                 @endforeach
                 </select>
             </div>
@@ -38,7 +39,7 @@
                 <select class="form-select" name="idCategoria" id="idCategoria">
                     <option value="">Seleccione una categoría</option>
             @foreach( $categorias as $categoria )
-                    <option @selected( old('idCategoria')==$categoria->idCategoria ) value="{{ $categoria->idCategoria }}">{{ $categoria->catNombre }}</option>
+                    <option @selected( old('idCategoria', $Producto->idCategoria)==$categoria->idCategoria ) value="{{ $categoria->idCategoria }}">{{ $categoria->catNombre }}</option>
             @endforeach
                 </select>
             </div>
@@ -46,15 +47,25 @@
             <div class="form-group mb-4">
                 <label for="prdDescripcion">Descripción del Producto</label>
                 <textarea name="prdDescripcion" class="form-control"
-                          id="prdDescripcion">{{ old('prdDescripcion') }}</textarea>
+                          id="prdDescripcion">{{ old('prdDescripcion', $Producto->prdDescripcion) }}</textarea>
             </div>
 
+            <div class="form-group mb-4">
+                Imagen actual:
+                <img src="{{ url("/imagenes/productos/". $Producto->prdImagen) }}" class="img-thumbnail">
+            </div>
             <div class="custom-file mt-1 mb-4">
+                Modificar imagen (opcional): <br>
                 <input type="file" name="prdImagen"  class="custom-file-input" id="customFileLang" lang="es">
                 <label class="custom-file-label" for="customFileLang" data-browse="Buscar en disco">Seleccionar Archivo: </label>
             </div>
 
-            <button class="btn btn-dark mr-3 px-4">Agregar producto</button>
+            <input type="hidden" name="idProducto"
+                   value="{{ $Producto->idProducto }}">
+            <input type="hidden" name="imgActual"
+                   value="{{ $Producto->prdImagen }}">
+
+            <button class="btn btn-dark mr-3 px-4">Modificar producto</button>
             <a href="/productos" class="btn btn-outline-secondary">
                 Volver a panel de productos
             </a>

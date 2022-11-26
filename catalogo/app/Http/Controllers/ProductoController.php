@@ -16,6 +16,9 @@ class ProductoController extends Controller
      */
     public function index()
     {
+
+        /*$p = Producto::menor('1000')->alfa()->get();
+        dd($p);*/
         $productos = Producto::with(['getMarca', 'getCategoria'])
                                 ->paginate(5);
         return view('productos',
@@ -41,11 +44,11 @@ class ProductoController extends Controller
                 ]);
     }
 
-    private function validarForm( Request $request )
+    private function validarForm( Request $request, $idProducto = null )
     {
         $request->validate(
             [
-                'prdNombre'=>'required|unique:productos,prdNombre|min:3|max:30',
+                'prdNombre'=>'required|unique:productos,prdNombre,'.$idProducto.',idProducto|min:3|max:30',
                 'prdPrecio'=>'required|numeric|min:0',
                 'idMarca'=>'required',
                 'idCategoria'=>'required',
@@ -72,10 +75,15 @@ class ProductoController extends Controller
 
     private function subirImagen( Request $request ) : string
     {
-        //si no enviaron imagen
+        //si no enviaron imagen store()
         $prdImagen = 'noDisponible.jpg';
 
-        //si enviaron imaegn
+        //si no enviaron imagen update()
+        if( $request->has('imgActual') ){
+            $prdImagen = $request->imgActual;
+        }
+
+        //si enviaron imagen
         if( $request->file('prdImagen') ){
             $file = $request->file('prdImagen');
             $time = time();
@@ -97,10 +105,40 @@ class ProductoController extends Controller
     {
         //validación
         $this->validarForm($request);
-
+        $prdNombre = $request->prdNombre;
+        $prdPrecio = $request->prdPrecio;
+        $idMarca = $request->idMarca;
+        $idCategoria = $request->idCategoria;
+        $prdDescripcion = $request->prdDescripcion;
         $prdImagen = $this->subirImagen($request);
+        try{
+            $Producto = new Producto;
+            //asignamos atributos
+            $Producto->prdNombre = $prdNombre;
+            $Producto->prdPrecio = $prdPrecio;
+            $Producto->idMarca = $idMarca;
+            $Producto->idCategoria = $idCategoria;
+            $Producto->prdDescripcion = $prdDescripcion;
+            $Producto->prdImagen = $prdImagen;
+            $Producto->prdActivo = 1;
+            //almacenamos en tabla productos
+            $Producto->save();
 
-        return 'pasó validación y la img es: '.$prdImagen;
+            return redirect('/productos')
+                ->with([
+                        'mensaje'=>'Producto: '.$prdNombre.' agregado correctmente.',
+                        'css'=>'success'
+                    ]);
+        }
+        catch (\Throwable $th) {
+            return redirect("/productos")
+                ->with(
+                    [
+                        'mensaje' => 'No se pudo agregar el producto: '. $prdNombre,
+                        'css' => 'danger'
+                    ]
+                );
+        }
     }
 
     /**
@@ -120,9 +158,20 @@ class ProductoController extends Controller
      * @param  \App\Models\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function edit(Producto $producto)
+    public function edit( $id )
     {
-        //
+        //obtenemos listado de marcas y de categorías
+        $marcas = Marca::all();
+        $categorias = Categoria::all();
+        //obtenemos datos de producto
+        $Producto = Producto::find( $id );
+        return view('productoEdit',
+                [
+                    'marcas'=>$marcas,
+                    'categorias'=>$categorias,
+                    'Producto'=>$Producto
+                ]
+        );
     }
 
     /**
@@ -132,9 +181,50 @@ class ProductoController extends Controller
      * @param  \App\Models\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Producto $producto)
+    public function update( Request $request )
     {
-        //
+        //validación
+        $this->validarForm( $request, $request->idProducto );/*VER*/
+        //subir imagen
+        $prdImagen = $this->subirImagen( $request );
+        try {
+            $idProducto = $request->idProducto;
+            $prdNombre = $request->prdNombre;
+            $prdPrecio = $request->prdPrecio;
+            $idMarca = $request->idMarca;
+            $idCategoria = $request->idCategoria;
+            $prdDescripcion = $request->prdDescripcion;
+            $Producto = Producto::find( $idProducto );
+            //asignamos atributos
+            $Producto->prdNombre = $prdNombre;
+            $Producto->prdPrecio = $prdPrecio;
+            $Producto->idMarca = $idMarca;
+            $Producto->idCategoria = $idCategoria;
+            $Producto->prdDescripcion = $prdDescripcion;
+            $Producto->prdImagen = $prdImagen;
+            $Producto->save();
+            return redirect('/productos')
+                ->with([
+                    'mensaje'=>'Producto: '.$prdNombre.' modificado correctmente.',
+                    'css'=>'success'
+                ]);
+        }
+        catch (\Throwable $th) {
+            return redirect("/productos")
+                ->with(
+                    [
+                        'mensaje' => 'No se pudo modificar el producto: '. $prdNombre,
+                        'css' => 'danger'
+                    ]
+                );
+        }
+    }
+
+    public function delete( $id )
+    {
+        //obtenemos datos de producto
+        $Producto = Producto::with(['getMarca', 'getCategoria'])->find( $id );
+        return view('productoDelete', [ 'Producto'=>$Producto ]);
     }
 
     /**
@@ -143,8 +233,25 @@ class ProductoController extends Controller
      * @param  \App\Models\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Producto $producto)
+    public function destroy( Request $request )
     {
-        //
+        $prdNombre = $request->prdNombre;
+        try {
+            Producto::destroy($request->idProducto);
+            return redirect('/productos')
+                ->with([
+                    'mensaje'=>'Producto: '.$prdNombre.' eliminado correctmente.',
+                    'css'=>'success'
+                ]);
+        }
+        catch (\Throwable $th) {
+            return redirect("/productos")
+                ->with(
+                    [
+                        'mensaje' => 'No se pudo eliminar el producto: '. $prdNombre,
+                        'css' => 'danger'
+                    ]
+                );
+        }
     }
 }
