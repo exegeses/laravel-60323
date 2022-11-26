@@ -1,51 +1,42 @@
-# Laravel Breeze
+<img src="imagenes/breeze.png">
 
-> Es un kit de inicio 
+# Laravel Breeze  
 
-  [] registro de usuarios
-  [] autenticación
-        ->middleware(['auth'])
+> Laravel Breeze es un kit de inicio minimalista, para una sencillísima implementacion de las características de autenticación de Laravel.   
+> Incluye un sistema de login, un sistema de registro, uno de reseteo de contraseña, verificación de email y confirmación de contraseña. 
+> Laravel Breeze implementa una capa predeterminada de vistas compuesta por plantillas Blade utilizando los estilos de Tailwind CSS.   
+> Breeze provee un maravilloso punto de inicio para comenzar un nuevo proyecto Laravel.
 
-Route::get('peticion', [ acción ])
-            ->middleware(['auth'])
+- [ ] Crear proyecto nuevo  
 
-  [] trae sistema de vistas usando BLADE + TAILWINDCSS
+        composer create-project laravel/laravel login
+
+- [ ] Crear nueva base de datos
+
+> Usando mySQL Workbench, phpMyAdmin o similar, crear una nueva base de datos  
+
+- [ ] Configuramos el .env de nuestro proyecto para que apunte a esa nueva base de datos  
+
+- [ ] Correr las migraciones     
   
-------
-1.- crear proyecto nuevo
-2.- crear nueva base de datos 
-    breeze60323
-3.- configurar .env para conectar a mysql
-------
-Migraciones
-4.- correr migraciones
-    php artisan migrate 
-------
-5.- descargar breeze
-    composer require laravel/breeze --dev
-6.- instalar breeze
-    php artisan breeze:install
-    
-    scaffolding - andamiaje
-        Blade + alpine.js
+        php artisan migrate    
 
+- [ ] Descargamos Breeze usando composer    
 
+        composer require laravel/breeze --dev  
 
-Ruta con autenticación.
-Route::get('peticion', [ acción ])
-            ->middleware(['auth']);
+> Luego que composer termina de descargar el package de Laravel Breeze, debemos terminar su instalación
 
-Ruta con nombre
-web.php
-Route::get('/dashboard', [ acción ])
-            ->middleware(['auth'])
-            ->name( 'dashboard' );
-Route::get('/marcas', [ acción ])
-            ->middleware(['auth'])
-            ->name( 'marcas' );
+- [ ]  Instalamos breeze    
 
-vistas
-    <a href="route('dashboard')" routeIs('dashboard')>
-    <a href="route('marcas')" routeIs('marcas')>
-    <a href="route('productos')" routeIs('productos')>
-    
+        php artisan breeze:install    
+
+> Este comando genera las vistas de autenticación, las routes, los controllers, y otros recursos de la instalación
+
+- [ ] Instalar TailwindCSS y algo de Javascript    
+
+        npm install
+        npm run dev
+
+> Breeze scaffolding installed successfully.
+
